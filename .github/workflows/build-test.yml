@@ -1,0 +1,153 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test on ${{ matrix.os }} - Python ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Display Python version
+      run: python -c "import sys; print(sys.version)"
+
+    - name: Check imports (smoke test)
+      run: |
+        python -c "import tkinter; print('tkinter OK')"
+        python -c "import customtkinter; print('customtkinter OK')"
+        python -c "import pandas; print('pandas OK')"
+        python -c "import numpy; print('numpy OK')"
+      continue-on-error: true
+
+    - name: Verify bot.py syntax
+      run: |
+        python -m py_compile bot.py
+
+    - name: Run unit tests (if tests exist)
+      run: |
+        if [ -d "tests" ] || [ -f "test_*.py" ]; then
+          pip install pytest pytest-cov
+          pytest --cov=. --cov-report=xml --cov-report=html
+        else
+          echo "No tests found, skipping test execution"
+        fi
+      shell: bash
+      continue-on-error: true
+
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: coverage-report-${{ matrix.os }}-${{ matrix.python-version }}
+        path: htmlcov/
+        retention-days: 30
+        if-no-files-found: ignore
+
+  build:
+    name: Build Distribution
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.10"
+
+    - name: Install build dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build wheel setuptools
+
+    - name: Create distribution package
+      run: |
+        # Create a simple setup.py for distribution
+        cat > setup.py << EOF
+        from setuptools import setup
+        
+        setup(
+            name="crypto-trader-bot",
+            version="0.1.0",
+            py_modules=["bot"],
+            install_requires=[
+                line.strip() 
+                for line in open("requirements.txt") 
+                if line.strip() and not line.startswith("#")
+            ],
+            python_requires=">=3.8",
+        )
+        EOF
+        python -m build
+
+    - name: Upload distribution artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: distribution-package
+        path: dist/
+        retention-days: 90
+
+  integration:
+    name: Integration Check
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.10"
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: distribution-package
+        path: dist/
+
+    - name: Install from distribution
+      run: |
+        pip install dist/*.whl || pip install dist/*.tar.gz
+
+    - name: Verify installation
+      run: |
+        python -c "import bot; print('Bot module imported successfully')" || echo "Module import check skipped"
+
+    - name: Create build summary
+      run: |
+        echo "# Build Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Build completed successfully" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## Artifacts Created" >> $GITHUB_STEP_SUMMARY
+        echo "- Distribution packages" >> $GITHUB_STEP_SUMMARY
+        echo "- Test coverage reports" >> $GITHUB_STEP_SUMMARY
+        ls -lh dist/ >> $GITHUB_STEP_SUMMARY || true

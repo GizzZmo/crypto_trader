@@ -1,0 +1,113 @@
+name: Python Code Quality
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: Code Quality Check
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pylint flake8 black isort mypy bandit safety
+
+    - name: Check code formatting with Black
+      run: |
+        black --check --diff bot.py
+      continue-on-error: true
+
+    - name: Check import sorting with isort
+      run: |
+        isort --check-only --diff bot.py
+      continue-on-error: true
+
+    - name: Lint with flake8
+      run: |
+        # Stop the build if there are Python syntax errors or undefined names
+        flake8 bot.py --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Exit-zero treats all errors as warnings. Line length set to 100
+        flake8 bot.py --count --exit-zero --max-complexity=10 --max-line-length=100 --statistics
+      continue-on-error: true
+
+    - name: Lint with pylint
+      run: |
+        pylint bot.py --exit-zero --max-line-length=100
+      continue-on-error: true
+
+    - name: Security check with bandit
+      run: |
+        bandit -r bot.py -f json -o bandit-report.json || true
+        bandit -r bot.py
+      continue-on-error: true
+
+    - name: Check dependencies for security vulnerabilities
+      run: |
+        safety check --json || true
+        safety check
+      continue-on-error: true
+
+    - name: Upload bandit results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: bandit-security-report-${{ matrix.python-version }}
+        path: bandit-report.json
+        retention-days: 30
+
+  type-check:
+    name: Type Checking
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.10"
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install mypy types-requests
+
+    - name: Type check with mypy
+      run: |
+        mypy bot.py --ignore-missing-imports --no-strict-optional
+      continue-on-error: true
+
+  summary:
+    name: Quality Summary
+    runs-on: ubuntu-latest
+    needs: [lint, type-check]
+    if: always()
+
+    steps:
+    - name: Check job status
+      run: |
+        echo "Linting job status: ${{ needs.lint.result }}"
+        echo "Type checking job status: ${{ needs.type-check.result }}"
+        echo "Code quality checks completed!"
