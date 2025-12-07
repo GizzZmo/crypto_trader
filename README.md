@@ -2,7 +2,7 @@
 
 An intelligent cryptocurrency trading bot that combines grid trading strategies with AI-powered market analysis using Google's Gemini AI. This bot features a modern GUI built with CustomTkinter and supports both testnet and live trading on Binance.
 
-![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
+![Python](https://img.shields.io/badge/python-3.9+-blue.svg)
 ![License](https://img.shields.io/badge/license-GPL--3.0-green.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)
 
@@ -23,7 +23,7 @@ An intelligent cryptocurrency trading bot that combines grid trading strategies 
 
 ### Prerequisites
 
-- Python 3.8 or higher
+- Python 3.9 or higher
 - Binance API credentials (for testnet or live trading)
 - Google Gemini API key (for AI features)
 
