@@ -20,7 +20,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.9", "3.10", "3.11"]
 
     steps:
     - name: Checkout code
@@ -108,7 +108,7 @@ jobs:
                 for line in open("requirements.txt") 
                 if line.strip() and not line.startswith("#")
             ],
-            python_requires=">=3.8",
+            python_requires=">=3.9",
         )
         EOF
         python -m build
