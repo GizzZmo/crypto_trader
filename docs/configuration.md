@@ -435,10 +435,10 @@ After configuration:
 
 Need help with configuration?
 
-- Check [FAQ](faq.md)
 - Review [User Guide](user-guide.md)
 - Search [GitHub Issues](https://github.com/GizzZmo/crypto_trader/issues)
-- Ask in [Discussions](https://github.com/GizzZmo/crypto_trader/discussions)
+- Ask in [GitHub Discussions](https://github.com/GizzZmo/crypto_trader/discussions)
+- Check [Documentation Index](README.md)
 
 ---
 

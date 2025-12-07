@@ -637,9 +637,9 @@ See [Configuration Guide](configuration.md#troubleshooting-configuration) for co
 
 ## Getting Help
 
-- [FAQ](faq.md) - Common questions
+- [GitHub Discussions](https://github.com/GizzZmo/crypto_trader/discussions) - Ask questions and get community help
 - [GitHub Issues](https://github.com/GizzZmo/crypto_trader/issues) - Report bugs
-- [Discussions](https://github.com/GizzZmo/crypto_trader/discussions) - Community help
+- [Documentation](README.md) - Browse all guides
 
 ---
 
