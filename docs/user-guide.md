@@ -614,7 +614,9 @@ Error: Invalid order parameters
 
 ## Keyboard Shortcuts & Tips
 
-**None currently**, but future versions may include:
+**No keyboard shortcuts are currently implemented.**
+
+**Planned for future versions:**
 - Ctrl+S: Stop bot
 - Ctrl+R: Restart bot
 - Ctrl+L: Clear logs

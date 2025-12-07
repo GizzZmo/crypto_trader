@@ -62,7 +62,11 @@ This Code of Conduct also applies to actions taken outside of these spaces when 
 
 ### Reporting
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement at [INSERT CONTACT EMAIL/METHOD].
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement through:
+
+- **GitHub Issues**: Open a confidential issue in the repository
+- **GitHub Discussions**: Use the private discussion feature
+- **Repository Maintainers**: Contact via GitHub profile
 
 All complaints will be reviewed and investigated promptly and fairly.
 

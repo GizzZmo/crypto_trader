@@ -136,13 +136,15 @@ cd release-package
 
 Create virtual environment and install dependencies (same as Method 1, Steps 2-4).
 
-### Method 3: Installation via pip (When Available)
+### Method 3: Installation via pip (Future Release)
+
+**Note:** This method is not yet available. The package name `crypto-trader-bot` will be published to PyPI in a future release.
+
+Once available, installation will be:
 
 ```bash
 pip install crypto-trader-bot
 ```
-
-Note: This method will be available in future releases.
 
 ## Post-Installation Setup
 
