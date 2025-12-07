@@ -7,10 +7,15 @@ on:
     branches: [ main, develop ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: Code Quality Check
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
@@ -80,6 +85,8 @@ jobs:
   type-check:
     name: Type Checking
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
     - name: Checkout code
@@ -105,6 +112,8 @@ jobs:
   summary:
     name: Quality Summary
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     needs: [lint, type-check]
     if: always()
 
