@@ -35,7 +35,12 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        if [ -f requirements.txt ]; then
+          pip install -r requirements.txt
+        else
+          echo "No requirements.txt found, skipping dependency install"
+        fi
+      shell: bash
 
     - name: Display Python version
       run: python -c "import sys; print(sys.version)"
@@ -95,19 +100,24 @@ jobs:
 
     - name: Create distribution package
       run: |
-        # Create a simple setup.py for distribution
-        cat > setup.py << EOF
+        # Create a simple setup.py for distribution that tolerates missing requirements.txt
+        cat > setup.py << 'EOF'
+        import os
         from setuptools import setup
-        
+
+        install_requires = []
+        if os.path.exists("requirements.txt"):
+            with open("requirements.txt", "r") as f:
+                for line in f:
+                    stripped = line.strip()
+                    if stripped and not stripped.startswith("#"):
+                        install_requires.append(stripped)
+
         setup(
             name="crypto-trader-bot",
             version="0.1.0",
             py_modules=["bot"],
-            install_requires=[
-                line.strip() 
-                for line in open("requirements.txt") 
-                if line.strip() and not line.startswith("#")
-            ],
+            install_requires=install_requires,
             python_requires=">=3.9",
         )
         EOF
