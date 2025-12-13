@@ -247,7 +247,7 @@ message = gui_queue.get_nowait()
 
 | Component | Technology | Version | Purpose |
 |-----------|-----------|---------|---------|
-| Language | Python | 3.8+ | Core development |
+| Language | Python | 3.9+ | Core development |
 | GUI | CustomTkinter | 5.2.0+ | Modern interface |
 | GUI Base | Tkinter | Built-in | GUI foundation |
 | Trading API | python-binance | 1.0.19+ | Binance integration |
