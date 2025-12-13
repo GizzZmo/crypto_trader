@@ -51,7 +51,7 @@ We actively welcome your pull requests!
 
 ### Prerequisites
 
-- Python 3.8+
+- Python 3.9+
 - Git
 - pip or conda
 
