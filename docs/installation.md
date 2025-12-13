@@ -6,7 +6,7 @@ This guide will walk you through the installation process for the AI-Powered Bin
 
 ### Minimum Requirements
 - **Operating System**: Windows 10+, macOS 10.14+, or Linux (Ubuntu 20.04+)
-- **Python**: Version 3.8 or higher
+- **Python**: Version 3.9 or higher
 - **RAM**: 2 GB minimum
 - **Disk Space**: 500 MB free space
 - **Internet**: Stable internet connection required
